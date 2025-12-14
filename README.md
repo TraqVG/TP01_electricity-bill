@@ -39,4 +39,3 @@ docker run -p 8080:8080 --env-file .env tp01_electricity-bill:latest
 docker pull traqvg/tp01_electricity-bill:latest
 docker run -p 8080:8080 --env-file .env traqvg/tp01_electricity-bill:latest
 ```
-
