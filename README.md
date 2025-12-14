@@ -28,10 +28,15 @@ node backend/src/server.js
 
 > ถ้าเครื่องใช้ `python3` ให้ตั้งค่า env: `PYTHON_BIN=python3`
 
-## Run ด้วย Docker
+## Run ด้วย Docker ( Local )
 ```bash
 docker build -t electricbill .
 docker run -p 8080:8080 --env-file .env electricbill
 ```
 
->>>>>>> 53b28e4 (initial commit)
+## Run ด้วย Docker Pull
+```bash
+docker pull traqvg/tp02_electricity-bill:latest
+docker run -p 8080:8080 --env-file .env traqvg/tp02_electricity-bill:latest
+```
+
