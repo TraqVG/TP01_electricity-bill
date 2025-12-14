@@ -36,7 +36,7 @@ docker run -p 8080:8080 --env-file .env electricbill
 
 ## Run ด้วย Docker Pull
 ```bash
-docker pull traqvg/tp02_electricity-bill:latest
-docker run -p 8080:8080 --env-file .env traqvg/tp02_electricity-bill:latest
+docker pull traqvg/tp01_electricity-bill:latest
+docker run -p 8080:8080 --env-file .env traqvg/tp01_electricity-bill:latest
 ```
 
