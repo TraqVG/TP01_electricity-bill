@@ -1,29 +1,27 @@
 FROM node:20-bookworm
 
-# Install Python for running the AI part
+# Install Python (for AI) + venv support
 RUN apt-get update \
-    && apt-get install -y python3 python3-pip python3-venv \
-    &&  rm -rf /var/lib/apt/lists/*
+ && apt-get install -y python3 python3-venv python3-pip \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Install Node deps (backend)
-COPY backend/package.json backend/package-lock.json ./backend/
+COPY backend/package*.json ./backend/
 RUN cd backend && npm ci --omit=dev
 
-# Install Python deps
+# Install Python deps in venv
 COPY requirements.txt .
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m venv /opt/venv \
+ && /opt/venv/bin/python -m pip install --no-cache-dir -U pip setuptools wheel \
+ && /opt/venv/bin/python -m pip install --no-cache-dir -r requirements.txt
 
-# ให้ backend เรียก python จาก venv ได้
-ENV PYTHON_BIN=python
+# Let backend call venv python directly
+ENV PYTHON_BIN=/opt/venv/bin/python
 
 # Copy the rest of the project
 COPY . .
 
 EXPOSE 8080
-
-CMD ["node", "backend/src/server.js"]
+CMD ["node","backend/src/server.js"]
