@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # TP01_electricity-bill
 Lab project: Electricity bill calculation system built with Node.js + Python (AI), reading/writing CSV and containerized with Docker.
 =======
