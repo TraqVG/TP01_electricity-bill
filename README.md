@@ -7,7 +7,7 @@ Lab project: Electricity bill calculation system built with Node.js + Python (AI
 1) หน้าเว็บ (frontend) รับ input เครื่องใช้ไฟฟ้า + หน่วย (kWh)
 2) Backend (Node/Express) เขียนข้อมูลลง `ai/data/electricity.csv`
 3) Backend เรียก `python ai/app/main.py` เพื่อ:
-   - คำนวณค่าไฟ + Top 3 เครื่องใช้ไฟฟ้าที่กินไฟ (จาก `Electricity_Calculate.py`)
+   - ส่งทุกเครื่องใช้ไฟฟ้าไปให้ Ai
    - ส่ง summary ที่คำนวณแล้วให้ AI วิเคราะห์/แนะนำ (จาก `agent.py`)
    - พิมพ์คำตอบออกทาง stdout และเขียน `ai/data/output.csv`
 4) Backend ส่งคำตอบกลับไปแสดงบนหน้าเว็บ
