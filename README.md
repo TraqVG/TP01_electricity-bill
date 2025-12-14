@@ -1,7 +1,5 @@
 # TP01_electricity-bill
 Lab project: Electricity bill calculation system built with Node.js + Python (AI), reading/writing CSV and containerized with Docker.
-=======
-# Lab02_2_Electricity_bill
 
 โฟลวการทำงาน:
 1) หน้าเว็บ (frontend) รับ input เครื่องใช้ไฟฟ้า + หน่วย (kWh)
