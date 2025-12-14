@@ -30,7 +30,7 @@ node backend/src/server.js
 
 ## Run ด้วย Docker ( Local )
 ```bash
-docker build -t electricbill .
+docker build -t tp01_electricity-bill:latest .
 docker run -p 8080:8080 --env-file .env tp01_electricity-bill:latest
 ```
 
