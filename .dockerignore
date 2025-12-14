@@ -1,0 +1,11 @@
+**/node_modules
+**/__pycache__
+*.pyc
+*.pyo
+*.log
+.git
+.env
+.vscode
+.idea
+Dockerfile
+npm-debug.log

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Bill Calculator</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>⚡ คำนวณค่าไฟ (AI Calculator)</h2>
+
+    <div class="header-row">
+        <div class="header-item">ชื่อเครื่องใช้ไฟฟ้า</div>
+        <div class="header-item">จำนวนหน่วย (kWh)</div>
+    </div>
+
+    <div id="appliance-list">
+        <div class="input-group">
+            <input type="text" name="name[]" placeholder="ชื่อเครื่องใช้ไฟฟ้า (เช่น แอร์)">
+            <input type="number" name="kwh[]" placeholder="จำนวนหน่วย (kWh)">
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button type="button" class="btn-add" onclick="addRow()">+ เพิ่มรายการ</button>
+        <button type="button" class="btn-calc" onclick="calculate()">🚀 คำนวณค่าไฟ</button>
+    </div>
+
+    <div id="loading-section">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div id="timer-text" class="timer-text">AI กำลังประมวลผลจะได้คำตอบภายใน 05:00 นาที</div>
+    </div>
+
+    <div class="result-section">
+        <h3>ผลลัพธ์จาก AI</h3>
+        <pre id="result">...</pre>
+    </div>
+</div>
+
+<script>
+let timerInterval;
+
+function addRow() {
+    const list = document.getElementById("appliance-list");
+    const row = document.createElement("div");
+    row.className = "input-group";
+
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "name[]";
+    nameInput.placeholder = "ชื่อเครื่องใช้ไฟฟ้า";
+
+    const kwhInput = document.createElement("input");
+    kwhInput.type = "number";
+    kwhInput.name = "kwh[]";
+    kwhInput.placeholder = "kWh";
+
+    row.appendChild(nameInput);
+    row.appendChild(kwhInput);
+    list.appendChild(row);
+}
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+async function calculate(){
+    const resultBox = document.getElementById("result");
+    const loadingSection = document.getElementById("loading-section");
+    const progressBar = document.getElementById("progress-bar");
+    const timerText = document.getElementById("timer-text");
+
+    // 1. เคลียร์ผลลัพธ์เก่า และแสดง Loading
+    resultBox.textContent = "";
+    loadingSection.style.display = "block";
+    
+    // 2. ตั้งค่าเวลาเริ่มต้น 5 นาที (300 วินาที)
+    let timeLeft = 300; 
+    const totalTime = 300;
+    
+    // รีเซ็ตหลอดให้เต็มและข้อความเริ่ม
+    progressBar.style.width = "100%";
+    timerText.textContent = `AI กำลังประมวลผลจะได้คำตอบภายใน ${formatTime(timeLeft)} นาที`;
+
+    // 3. เริ่มนับถอยหลัง
+    if (timerInterval) clearInterval(timerInterval);
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        
+        // อัปเดตข้อความ
+        timerText.textContent = `AI กำลังประมวลผลจะได้คำตอบภายใน ${formatTime(timeLeft)} นาที`;
+        
+        // อัปเดตหลอด
+        const percentage = (timeLeft / totalTime) * 100;
+        progressBar.style.width = `${percentage}%`;
+
+        // กรณีเวลาหมด
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            loadingSection.style.display = "none";
+            resultBox.textContent = "AI เกิดการล่าช้า";
+        }
+    }, 1000);
+
+    // 4. เตรียมข้อมูลส่ง Backend
+    const appliance = document.querySelectorAll('input[name="name[]"]');
+    const kwhs  = document.querySelectorAll('input[name="kwh[]"]');
+    const appliance_data = [];
+
+    for (let i = 0; i < appliance.length; i++) {
+        if(appliance[i].value || kwhs[i].value) {
+            appliance_data.push({
+                appliance: appliance[i].value,
+                units: kwhs[i].value
+            });
+        }
+    }
+
+    try {
+        const res = await fetch("/calculate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(appliance_data)
+        });
+
+        const json = await res.json();
+
+        // ** ได้คำตอบแล้ว (หยุดเวลาทันที) **
+        clearInterval(timerInterval); 
+        loadingSection.style.display = "none"; 
+
+        resultBox.textContent = json.ok ? json.answer : ("Error: " + json.error);
+
+    } catch (error) {
+        clearInterval(timerInterval);
+        loadingSection.style.display = "none";
+        resultBox.textContent = "เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message;
+    }
+}
+</script>
+
+</body>
+</html>
